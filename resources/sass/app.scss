@@ -1,0 +1,47 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+// Font Awesome Icons
+$fa-font-path: "../webfonts";
+@import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/brands';
+
+.logo {
+    max-height: 50px;
+}
+
+.pizzas-list {
+    .pizza {
+        min-width: 270px;
+        h2 {
+            white-space: nowrap;
+        }
+
+        .icons {
+            text-align: right;
+            font-size: 22px;
+            .fa-fire {
+                color: $orange;
+            }
+            .fa-hotjar {
+                color: $red;
+            }
+        }
+        .image {
+            img {
+                max-width: 100%;
+            }
+        }
+        .short_description {
+            height: 40px;
+            overflow: hidden;
+        }
+    }
+}
