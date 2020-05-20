@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <a href="{{ route('cart') }}" class="btn btn-warning btn-cart ml-md-3 mt-3 mt-md-0">Cart ({{ count($cart) }})</a>
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
         <h1 class="display-4">PizzaStore</h1>
     </div>
@@ -31,7 +32,7 @@
                 <div class="short_description">
                     <p>{{ $pizza->short_description }}</p>
                 </div>
-                <button type="button" class="btn btn-lg btn-block btn-outline-primary mt-3">Add to cart</button>
+                <button type="button" class="btn btn-addtocart btn-lg btn-block btn-outline-primary mt-3" data-id="{{ $pizza->id }}">Add to cart</button>
             </div>
         </div>
         @endforeach

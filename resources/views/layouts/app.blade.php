@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'PizzaStore') }}</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -19,9 +19,9 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body>
+<body class="@yield('bodyclass')">
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
-        <img src="{{ asset('img/logo.png') }}" alt="PizzaStore" class="logo my-0 mr-md-auto font-weight-normal">
+        <a href="/" class="my-0 mr-md-auto font-weight-normal"><img src="{{ asset('img/logo.png') }}" alt="PizzaStore" class="logo"></a>
         @guest
         <a class="btn btn-outline-primary" href="{{ route('login') }}">Login</a>
         @if (Route::has('register'))
@@ -47,5 +47,6 @@
             </div>
         </footer>
     </div>
+
 </body>
 </html>

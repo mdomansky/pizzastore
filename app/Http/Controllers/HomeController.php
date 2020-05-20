@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Pizza;
+use Illuminate\Support\Facades\Cookie;
 
 class HomeController extends Controller
 {
@@ -17,6 +18,7 @@ class HomeController extends Controller
         $pizzas = Pizza::orderBy('price', 'desc')->get();
         return view('home', [
             'pizzas' => $pizzas,
+            'cart' => (array) json_decode(Cookie::get('cart'), true),
         ]);
     }
 }

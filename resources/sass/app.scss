@@ -45,3 +45,24 @@ $fa-font-path: "../webfonts";
         }
     }
 }
+body.cart {
+    font-size: 16px;
+    .pizza-item {
+        div.price, div.qty, div.price_all {
+            font-size: 20px;
+        }
+        div.qty {
+            a.change-count {
+                font-weight: bold;
+                font-size: 28px;
+                line-height: 22px;
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+    .cart-total {
+        font-size: 26px;
+    }
+}

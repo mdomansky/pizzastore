@@ -6329,6 +6329,131 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/jquery.cookie/jquery.cookie.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/jquery.cookie/jquery.cookie.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+ * jQuery Cookie Plugin v1.4.1
+ * https://github.com/carhartl/jquery-cookie
+ *
+ * Copyright 2013 Klaus Hartl
+ * Released under the MIT license
+ */
+(function (factory) {
+	if (true) {
+		// AMD
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+}(function ($) {
+
+	var pluses = /\+/g;
+
+	function encode(s) {
+		return config.raw ? s : encodeURIComponent(s);
+	}
+
+	function decode(s) {
+		return config.raw ? s : decodeURIComponent(s);
+	}
+
+	function stringifyCookieValue(value) {
+		return encode(config.json ? JSON.stringify(value) : String(value));
+	}
+
+	function parseCookieValue(s) {
+		if (s.indexOf('"') === 0) {
+			// This is a quoted cookie as according to RFC2068, unescape...
+			s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+		}
+
+		try {
+			// Replace server-side written pluses with spaces.
+			// If we can't decode the cookie, ignore it, it's unusable.
+			// If we can't parse the cookie, ignore it, it's unusable.
+			s = decodeURIComponent(s.replace(pluses, ' '));
+			return config.json ? JSON.parse(s) : s;
+		} catch(e) {}
+	}
+
+	function read(s, converter) {
+		var value = config.raw ? s : parseCookieValue(s);
+		return $.isFunction(converter) ? converter(value) : value;
+	}
+
+	var config = $.cookie = function (key, value, options) {
+
+		// Write
+
+		if (value !== undefined && !$.isFunction(value)) {
+			options = $.extend({}, config.defaults, options);
+
+			if (typeof options.expires === 'number') {
+				var days = options.expires, t = options.expires = new Date();
+				t.setTime(+t + days * 864e+5);
+			}
+
+			return (document.cookie = [
+				encode(key), '=', stringifyCookieValue(value),
+				options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+				options.path    ? '; path=' + options.path : '',
+				options.domain  ? '; domain=' + options.domain : '',
+				options.secure  ? '; secure' : ''
+			].join(''));
+		}
+
+		// Read
+
+		var result = key ? undefined : {};
+
+		// To prevent the for loop in the first place assign an empty array
+		// in case there are no cookies at all. Also prevents odd result when
+		// calling $.cookie().
+		var cookies = document.cookie ? document.cookie.split('; ') : [];
+
+		for (var i = 0, l = cookies.length; i < l; i++) {
+			var parts = cookies[i].split('=');
+			var name = decode(parts.shift());
+			var cookie = parts.join('=');
+
+			if (key && key === name) {
+				// If second argument (value) is a function it's a converter...
+				result = read(cookie, value);
+				break;
+			}
+
+			// Prevent storing a cookie that we couldn't decode.
+			if (!key && (cookie = read(cookie)) !== undefined) {
+				result[name] = cookie;
+			}
+		}
+
+		return result;
+	};
+
+	config.defaults = {};
+
+	$.removeCookie = function (key, options) {
+		if ($.cookie(key) === undefined) {
+			return false;
+		}
+
+		// Must not alter options, thus extending a fresh object...
+		$.cookie(key, '', $.extend({}, options, { expires: -1 }));
+		return !$.cookie(key);
+	};
+
+}));
+
+
+/***/ }),
+
 /***/ "./node_modules/jquery/dist/jquery.js":
 /*!********************************************!*\
   !*** ./node_modules/jquery/dist/jquery.js ***!
@@ -37226,6 +37351,100 @@ module.exports = function(module) {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
+__webpack_require__(/*! ./../../node_modules/jquery.cookie/jquery.cookie.js */ "./node_modules/jquery.cookie/jquery.cookie.js");
+
+$().ready(function () {
+  $('.pizza .btn-addtocart').click(function () {
+    var id = $(this).data('id');
+    setCartData(id, 1);
+    $('.btn-cart').text('Cart (' + Object.keys(getCartData()).length + ')');
+    $("html").animate({
+      scrollTop: 0
+    }, 600);
+    return false;
+  });
+  $('body.cart select[name="delivery"]').change(function () {
+    cart_calc();
+
+    if ($(this).val() != 0) {
+      $('body.cart input[name="address"]').prop('disabled', '');
+    } else {
+      $('body.cart input[name="address"]').prop('disabled', 'disabled');
+    }
+  });
+  $('body.cart a.change-count').click(function () {
+    var element = $(this).siblings('span');
+    var id = $(this).data('id');
+    var diff = 0;
+
+    if ($(this).hasClass('count-down')) {
+      diff = -1;
+    } else {
+      diff = +1;
+    }
+
+    element.text(parseInt(element.text()) + diff);
+
+    if (parseInt(element.text()) <= 0) {
+      element.closest('div.pizza-item').fadeOut();
+    }
+
+    setCartData(id, diff);
+    cart_calc();
+    return false;
+  });
+
+  function cart_calc() {
+    var total = 0;
+    $.each($('body.cart .pizza-item'), function (idx, val) {
+      var price = parseFloat($(this).find('div.price span.money-amount').text());
+      var qty = parseInt($(this).find('div.qty span').text());
+      $(this).find('div.price_all span.money-amount').text((price * qty).toFixed(2));
+      total += price * qty;
+    });
+    total += $('body.cart select[name="delivery"] option:selected').data('cost');
+    $('body.cart .cart-total span.money-amount').text(total.toFixed(2));
+  }
+
+  function getCartData() {
+    return JSON.parse($.cookie('cart') || "[]");
+  }
+
+  function setCartData(id, diff) {
+    var cart = getCartData();
+    var updated = false;
+    var id_to_del = false;
+    $.each(cart, function (item_id, item_val) {
+      if (item_val.id == id) {
+        cart[item_id]['qty'] += diff;
+        updated = true;
+
+        if (cart[item_id]['qty'] == 0) {
+          id_to_del = item_id;
+        }
+      }
+    });
+
+    if (updated) {
+      if (id_to_del !== false) {
+        cart.splice(id_to_del, 1);
+      }
+    } else {
+      if (diff > 0) {
+        cart.push({
+          "id": id,
+          "qty": diff
+        });
+      }
+    }
+
+    $.cookie('cart', JSON.stringify(cart), {
+      expires: 30,
+      path: '/'
+    });
+  }
+});
 
 /***/ }),
 
