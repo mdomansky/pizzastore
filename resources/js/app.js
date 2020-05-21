@@ -11,12 +11,12 @@ $().ready(function(){
         return false;
     });
 
-    $('body.cart select[name="delivery"]').change(function(){
+    $('body.cart select[name="deliveryoption"]').change(function(){
         cart_calc();
         if ($(this).val() != 0) {
-            $('body.cart input[name="address"]').prop('disabled', '');
+            $('body.cart input[name="delivery_address"]').prop('disabled', '');
         } else {
-            $('body.cart input[name="address"]').prop('disabled', 'disabled');
+            $('body.cart input[name="delivery_address"]').prop('disabled', 'disabled');
         }
     });
     $('body.cart a.change-count').click(function(){
@@ -47,7 +47,7 @@ $().ready(function(){
             total += price * qty;
         });
 
-        total += $('body.cart select[name="delivery"] option:selected').data('cost');
+        total += $('body.cart select[name="deliveryoption"] option:selected').data('cost');
 
         $('body.cart .cart-total span.money-amount').text(total.toFixed(2));
     }

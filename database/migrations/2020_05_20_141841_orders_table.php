@@ -15,25 +15,25 @@ class OrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('unique_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('fio');
+            $table->string('name');
             $table->string('phone');
-            $table->string('email');
-            $table->string('delivery_address');
-            $table->timestamp('delivery_time');
+            $table->string('email')->nullable();
+            $table->string('delivery_address')->nullable();
+            $table->string('delivery_name')->nullable();
+            $table->float('delivery_cost')->nullable();
             $table->string('status');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            //$table->foreign('user_id')->references('id')->on('users');
         });
 
         Schema::create('orderpizzas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('original_pizza_id');
-            $table->unsignedInteger('count');
+            $table->unsignedInteger('qty');
             $table->string('name');
             $table->string('image');
             $table->float('price');
